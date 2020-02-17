@@ -1,0 +1,21 @@
+#! /bin/bash
+
+# This simple script for run elasticsearch container
+# It comes with Dockerfile, wich create elasticsearch image with needed configurations. See Dockerfile, if you want to custom config
+NAME_IMAGE=lastic
+NAME_CONTAINER=elastic_host
+ES_DATA_DIR=data
+
+# If you are bind-mounting a local directory or file, it must be readable by the elasticsearch user.
+# In addition, this user must have write access to the data and log dirs.
+# A good strategy is to grant group access to gid 0 for the local directory.
+sudo chmod g+rwx $ES_DATA_DIR
+sudo chgrp 0 $ES_DATA_DIR
+
+# This command build image. You may change name.
+docker build -t $NAME_IMAGE .
+
+
+# This command run container and mount host data with elasticsearch data in docker.
+# Supposed to Dockerfile and this script are located in the same "data" folder
+docker run --rm -d --name $NAME_CONTAINER -v "$(pwd)"/data:/usr/share/elasticsearch/data:rw -p 9200:9200 $NAME_IMAGE
